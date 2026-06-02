@@ -1,10 +1,13 @@
 package com.example.First.service;
 
+import com.example.First.dto.EmployeeDTO;
+import com.example.First.entity.Department;
 import com.example.First.entity.Employee;
 import com.example.First.entity.EmployeeNew;
+import com.example.First.exception.ResourceNotFoundException;
+import com.example.First.repositry.DepartmentRepositry;
 import com.example.First.repositry.EmployeeNewRepository;
 import com.example.First.repositry.EmployeeRepositry;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,35 +15,43 @@ import java.util.List;
 
 @Service
 public class EmployeeService {
+
     @Autowired
     private EmployeeRepositry employeeRepositry;
 
     @Autowired
     private EmployeeNewRepository employeeNewRepository;
 
-    public Employee saveEmp(Employee e){
-        return employeeRepositry.save(e);
+    @Autowired
+    private DepartmentRepositry departmentRepositry;
+
+    public Employee saveEmp(EmployeeDTO dto) {
+      Department department = departmentRepositry.findById(dto.getDepartmentId()).orElseThrow(() -> new ResourceNotFoundException("Department not found with id: " + dto.getDepartmentId()));
+        Employee employee = new Employee();
+        employee.setName(dto.getName());
+        employee.setDepartment(department);
+        return employeeRepositry.save(employee);
     }
 
-    public List<Employee> getAllEmp(){
+    public List<Employee> getAllEmp() {
         return employeeRepositry.findAll();
     }
 
     public Employee getEmpById(Long id) {
-        Employee user = employeeRepositry.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "User not found with id: " + id));
-        return user;
+        return employeeRepositry.findById(id).orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + id));
     }
 
-    public Employee updateEmp(Employee e, Long id) {
+    public Employee updateEmp(EmployeeDTO dto, Long id) {
         Employee existing = getEmpById(id);
-        existing.setName(e.getName());
+        Department department = departmentRepositry.findById(dto.getDepartmentId()).orElseThrow(() -> new ResourceNotFoundException("Department not found with id: " + dto.getDepartmentId()));
+        existing.setName(dto.getName());
+        existing.setDepartment(department);
         return employeeRepositry.save(existing);
     }
 
-    public void deleteEmp(Long id){
-        employeeRepositry.deleteById(id);
+    public void deleteEmp(Long id) {
+        Employee employee = getEmpById(id);
+        employeeRepositry.delete(employee);
     }
 
     public void createEmployeeNew(String name) {
@@ -49,7 +60,7 @@ public class EmployeeService {
         employeeNewRepository.save(employeeNew);
     }
 
-    public Object getAllNew() {
-        return employeeNewRepository.findAll();
+    public List<EmployeeNew> getAllNew() {
+     return employeeNewRepository.findAll();
     }
 }

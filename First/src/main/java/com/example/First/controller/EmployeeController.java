@@ -1,8 +1,10 @@
 package com.example.First.controller;
 
+import com.example.First.dto.EmployeeDTO;
 import com.example.First.entity.Employee;
 import com.example.First.entity.EmployeeNew;
 import com.example.First.service.EmployeeService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,39 +19,39 @@ public class EmployeeController {
     private EmployeeService employeeService;
 
     @PostMapping
-    public Employee saveEmployee(@RequestBody Employee e){
-        return employeeService.saveEmp(e);
+    public Employee saveEmployee(@Valid @RequestBody EmployeeDTO dto) {
+        return employeeService.saveEmp(dto);
     }
 
     @GetMapping
-    public List<Employee>getAllEmp(){
+    public List<Employee> getAllEmp() {
         return employeeService.getAllEmp();
     }
 
     @GetMapping("/{id}")
-    public Employee getEmpById(@PathVariable Long id){
+    public Employee getEmpById(@PathVariable Long id) {
         return employeeService.getEmpById(id);
     }
 
     @PutMapping("/{id}")
-    public Employee updateById(@RequestBody Employee e, @PathVariable Long id){
-       return employeeService.updateEmp(e,id);
+    public Employee updateById(@Valid @RequestBody EmployeeDTO dto, @PathVariable Long id) {
+        return employeeService.updateEmp(dto, id);
     }
 
     @DeleteMapping("/{id}")
-    public String deleteById(@PathVariable Long id){
+    public String deleteById(@PathVariable Long id) {
         employeeService.deleteEmp(id);
-        return "successfully deleted";
+        return "Successfully Deleted";
     }
 
     @PostMapping("/new")
-    public ResponseEntity<?> createNewEmp(@RequestBody String name) {
-        employeeService.createEmployeeNew(name);
-        return ResponseEntity.ok("created successfully");
+    public ResponseEntity<String> createNewEmp(@Valid @RequestBody EmployeeDTO dto) {
+        employeeService.createEmployeeNew(dto.getName());
+        return ResponseEntity.ok("Created Successfully");
     }
 
     @GetMapping("/new")
-    public ResponseEntity<?> getAllNew() {
+    public ResponseEntity<List<EmployeeNew>> getAllNew() {
         return ResponseEntity.ok(employeeService.getAllNew());
     }
 
