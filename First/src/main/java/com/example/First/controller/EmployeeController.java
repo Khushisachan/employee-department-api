@@ -6,6 +6,7 @@ import com.example.First.entity.EmployeeNew;
 import com.example.First.service.EmployeeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,5 +55,17 @@ public class EmployeeController {
     public ResponseEntity<List<EmployeeNew>> getAllNew() {
         return ResponseEntity.ok(employeeService.getAllNew());
     }
+
+    // pagination
+    @GetMapping("/employees")
+    public ResponseEntity<Page<Employee>> getEmployees(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+        return ResponseEntity.ok(employeeService.getEmployee(page, size));
+    }
+
+    @GetMapping("/employees/search")
+    public ResponseEntity<Page<Employee>> searchEmployee(@RequestParam String name, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+        return ResponseEntity.ok(employeeService.searchEmployee(name, page, size));
+    }
+
 
 }

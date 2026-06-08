@@ -9,6 +9,11 @@ import com.example.First.repositry.DepartmentRepositry;
 import com.example.First.repositry.EmployeeNewRepository;
 import com.example.First.repositry.EmployeeRepositry;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -62,5 +67,16 @@ public class EmployeeService {
 
     public List<EmployeeNew> getAllNew() {
      return employeeNewRepository.findAll();
+    }
+
+    // pagination
+    public Page<Employee> getEmployee(int page , int size){
+        Pageable pageable = PageRequest.of(page,size, Sort.by("id").ascending()); // sorting
+        return employeeRepositry.findAll(pageable);
+    }
+
+    public Page<Employee> searchEmployee(String name, int page, int size){
+        Pageable pageable = PageRequest.of(page,size);
+        return employeeRepositry.findByName(name,pageable);
     }
 }

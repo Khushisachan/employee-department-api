@@ -5,6 +5,8 @@ import com.example.First.entity.Department;
 import com.example.First.service.DepartmentService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,5 +42,11 @@ public class DepartmentController {
     public String deleteById(@PathVariable Long id) {
         departmentService.deleteById(id);
         return "Successfully Deleted";
+    }
+
+    // pagination
+    @GetMapping("/departments/search")
+    public ResponseEntity<Page<Department>> searchDepartment(@RequestParam String name, @RequestParam int page, int size){
+        return ResponseEntity.ok(departmentService.searchDepartment(name, page, size));
     }
 }
