@@ -1,0 +1,15 @@
+package com.example.First.kafka;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class EmployeeProducer {
+    private final KafkaTemplate<String,String> kafkaTemplate;
+
+    public void sendMessage(String message){
+        kafkaTemplate.send("employee-topic",message);
+    }
+}
