@@ -5,9 +5,11 @@ import com.example.First.dto.EmployeeDTO;
 import com.example.First.entity.Department;
 import com.example.First.entity.Employee;
 import com.example.First.entity.EmployeeNew;
+import com.example.First.repositry.DepartmentRepositry;
 import com.example.First.service.DepartmentService;
 import com.example.First.service.EmployeeService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -36,6 +38,16 @@ class EmployeeControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockitoBean
+    private DepartmentRepositry departmentRepositry;
+
+    @BeforeEach
+    void setup() {
+        when(departmentRepositry.existsById(1L))
+                .thenReturn(true);
+    }
+
 
     // 1. POST /employees
     @Test
@@ -113,7 +125,7 @@ class EmployeeControllerTest {
 
             when(employeeService.updateEmp(any(EmployeeDTO.class), eq(1L))).thenReturn(employee);
 
-            mockMvc.perform(put("/employees//1").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dto)))
+            mockMvc.perform(put("/employees/1").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(dto)))
                     .andExpect(status().isOk()).andExpect(jsonPath("$.name").value("khushi renu sachan"));
 
         }
